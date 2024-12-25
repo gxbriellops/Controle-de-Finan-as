@@ -68,21 +68,21 @@ CATEGORIAS_DATA = [
         "emoji": "🏠",
         "orcamento_mensal": Decimal("1000"),
         "gasto_mensal": Decimal("1000"),
-        "descricao": "Aluguel, Casa de casinha etc..."
+        "descricao": "Aluguel, Pet, Manutenção, Internet..."
     },
     {
         "nome": "Saúde",
         "emoji": "💊",
         "orcamento_mensal": Decimal("1000"),
         "gasto_mensal": Decimal("1000"),
-        "descricao": "Farmácia, Consulta, Medicamentos etc..."
+        "descricao": "Farmácia, Consulta, Medicamentos, Autocuidado etc..."
     },
     {
         "nome": "Compras",
         "emoji": "👗",
         "orcamento_mensal": Decimal("1000"),
         "gasto_mensal": Decimal("1000"),
-        "descricao": "Roupas, Sapatos, Acessórios etc..."
+        "descricao": "Roupas, Sapatos, Acessórios, Eletronicos etc..."
     },
     {
         "nome": "Investimento",

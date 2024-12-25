@@ -4,6 +4,8 @@ import pandas as pd
 import plotly.express as px
 from database import criar_tabela_receitas, criar_tabela_despesas, adicionar_despesa, adicionar_receita
 from filtros import obter_receitas_mes_atual, obter_despesas_mes_atual
+from categ import Categoria, render_categoria
+from decimal import Decimal
 
 st.cache_data()
 
@@ -123,7 +125,20 @@ st.subheader("Categorias de Despesas")
 
 st.write(' ')
 
-cat1, cat2, cat3, cat4 = st.columns(4)
-cat5, cat6, cat7, cat8 = st.columns(4)
+categorias = [
+    Categoria(nome="Entretenimento", emoji="🎉", orcamento_mensal=Decimal("1000.00"), gasto_mensal=Decimal("300.00"), descricao="Streaming, jogos, passeios."),
+    Categoria(nome="Transporte", emoji="🚗", orcamento_mensal=Decimal("500.00"), gasto_mensal=Decimal("200.00"), descricao="Transportes, estacionamento, gasolina."),
+    Categoria(nome="Alimentação", emoji="🍔", orcamento_mensal=Decimal("800.00"), gasto_mensal=Decimal("400.00"), descricao="Restaurantes, fastfoods, mercado."),
+    Categoria(nome="Educação", emoji="📚", orcamento_mensal=Decimal("600.00"), gasto_mensal=Decimal("300.00"), descricao="Mensalidades, cursos."),
+    Categoria(nome="Casa", emoji="🏠", orcamento_mensal=Decimal("1200.00"), gasto_mensal=Decimal("800.00"), descricao="Contas de casa, pet."),
+    Categoria(nome="Saúde", emoji="🏥", orcamento_mensal=Decimal("400.00"), gasto_mensal=Decimal("150.00"), descricao="Consultas, rémedios, autocuidado."),
+    Categoria(nome="Compras", emoji="🛒", orcamento_mensal=Decimal("700.00"), gasto_mensal=Decimal("350.00"), descricao="Roupas, eletrônicos, acessórios."),
+    Categoria(nome="Investimento", emoji="💹", orcamento_mensal=Decimal("900.00"), gasto_mensal=Decimal("450.00"), descricao="Despesas com investimento")
+]
 
-st.header('Teste')
+row1 = st.columns(4)
+row2= st.columns(4)
+
+for categoria, rol in zip(categorias, row1 + row2):
+    with rol:
+        render_categoria(categoria)
