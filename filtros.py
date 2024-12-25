@@ -36,3 +36,21 @@ def obter_despesas_mes_atual():
     except Exception as e:
         print(f"Erro ao obter despesas do mês atual: {str(e)}")
         return 0.0
+    
+def obter_despesas_categorias(categoria: str):
+    try:
+        pasta_projeto = os.getcwd()
+        caminho_db = os.path.join(pasta_projeto, 'despesas.db')
+        conn = sqlite3.connect(caminho_db)
+        cursor = conn.cursor()
+        query = f"""
+        SELECT SUM(valor) FROM despesas
+        WHERE categoria = '{categoria}' = strftime('%Y-%m', DATE('now'));
+        """
+        cursor.execute(query)
+        resultado = cursor.fetchone()[0]
+        conn.close()
+        return resultado if resultado else 0.0
+    except Exception as e:
+        print(f"Erro ao obter despesas do mês atual: {str(e)}")
+        return 0.0

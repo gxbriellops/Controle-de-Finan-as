@@ -19,13 +19,13 @@ except Exception as e:
     st.error(f"Erro ao acessar o banco de dados de despesas: {e}")
     df_despesas = pd.DataFrame()
 
-# Converter a coluna 'data' para o formato de data (datetime)
+# Converter a coluna 'data' para o formato datetime
 df_despesas['data'] = pd.to_datetime(df_despesas['data'])
 
 # Extrair o mês/ano em formato de período
 df_despesas['mês'] = df_despesas['data'].dt.to_period('M')
 
-# Agrupar por mês/ano e somar os valores numéricos
+# Agrupar por mês/ano e somar os valores numéricos (não usado diretamente aqui)
 group = df_despesas.groupby('mês')
 
 # Obter os meses disponíveis como uma lista formatada por extenso
@@ -43,7 +43,8 @@ with col1:
     # Filtrar o DataFrame com base nos meses selecionados
     df_despesas_filtrado = df_despesas[(df_despesas['mês'] == selection)]
 
-
+df_despesas_filtrado = df_despesas_filtrado.drop(columns=['mês'])
+df_despesas_filtrado['valor'] = df_despesas_filtrado['valor'].apply(lambda x: f"R${x:,.2f}").replace(',', 'X').replace('.', ',').replace('X', '.') # Formato monetário
 with col2:
     st.subheader("Despesas")
     if not df_despesas.empty:

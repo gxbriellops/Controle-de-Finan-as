@@ -31,6 +31,7 @@ group = df_receitas.groupby('mês')
 # Obter os meses disponíveis como uma lista formatada por extenso
 mesesDisponiveis = df_receitas['mês'].dt.strftime("%B %Y").unique().tolist()
 
+
 # Criação de colunas no layout do Streamlit
 col1, col2 = st.columns(2)
 
@@ -43,6 +44,8 @@ with col1:
     # Filtrar o DataFrame com base nos meses selecionados
     df_receitas_filtrado = df_receitas[(df_receitas['mês'] == selection)]
 
+df_receitas_filtrado = df_receitas_filtrado.drop(columns=['mês'])
+df_receitas_filtrado['valor'] = df_receitas_filtrado['valor'].apply(lambda x: f"R${x:,.2f}").replace(',', 'X').replace('.', ',').replace('X', '.')
 
 with col2:
     st.subheader("Receitas")
