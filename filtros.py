@@ -43,11 +43,11 @@ def obter_despesas_categorias(categoria: str):
         caminho_db = os.path.join(pasta_projeto, 'despesas.db')
         conn = sqlite3.connect(caminho_db)
         cursor = conn.cursor()
-        query = f"""
+        query = """
         SELECT SUM(valor) FROM despesas
-        WHERE categoria = '{categoria}' = strftime('%Y-%m', DATE('now'));
+        WHERE categoria = ? AND strftime('%Y-%m', data) = strftime('%Y-%m', DATE('now'));
         """
-        cursor.execute(query)
+        cursor.execute(query, (categoria,))
         resultado = cursor.fetchone()[0]
         conn.close()
         return resultado if resultado else 0.0

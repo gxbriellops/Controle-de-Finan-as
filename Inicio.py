@@ -58,57 +58,46 @@ st.write(' ')
 tra, cart, cont = st.columns(3)
 
 with tra:
-    # Inicializar a variável de estado
-    if 'mostrar_formulario' not in st.session_state:
-        st.session_state.mostrar_formulario = False
-
-    # Botão para exibir o formulário
-    if st.button("Adicionar Transação"):
-        st.session_state.mostrar_formulario = True
-
-    # Exibir o formulário se a variável de estado estiver True
-    if st.session_state.mostrar_formulario:
-
         # BOTÃO DE ADICIONAR RECEITAS E DESPESAS
-        selection = st.selectbox("Selecione o que você deseja adicionar:", ["Receitas", "Despesas"])
+    selection = st.radio("", ["Fechado", "Receitas", "Despesas"], horizontal=True, label_visibility="collapsed")
 
-        # SEGUNDA PARTE -> ADICIONAR RECEITAS
-        if selection == "Receitas":
-            st.subheader("Adicionar Receitas")
-            a, b = st.columns(2)
-            with a:
-                titulo_receita = st.text_input("Titulo").capitalize()
-            with b:
-                valor_receita = st.number_input("Valor", min_value=0.1, step=0.01)
-            c, d = st.columns(2)
-            with c:
-                data_receita = st.date_input("Data").strftime('%Y-%m-%d')
-            with d:
-                tipo_receita = st.selectbox("Categoria", ["Salário mensal", "Freelance", "Renda passiva"])
-            if st.button("Adicionar Receita"):
-                if adicionar_receita(titulo_receita, valor_receita, data_receita, tipo_receita):
-                    st.success("Receita adicionada com sucesso!")
-                else:
-                    st.error("Erro ao adicionar receita.")
+    # SEGUNDA PARTE -> ADICIONAR RECEITAS
+    if selection == "Receitas":
+        st.subheader("Adicionar Receitas")
+        a, b = st.columns(2)
+        with a:
+            titulo_receita = st.text_input("Titulo").capitalize()
+        with b:
+            valor_receita = st.number_input("Valor", min_value=0.1, step=0.01)
+        c, d = st.columns(2)
+        with c:
+            data_receita = st.date_input("Data").strftime('%Y-%m-%d')
+        with d:
+            tipo_receita = st.selectbox("Categoria", ["Salário mensal", "Freelance", "Renda passiva"])
+        if st.button("Adicionar Receita"):
+            if adicionar_receita(titulo_receita, valor_receita, data_receita, tipo_receita):
+                st.success("Receita adicionada com sucesso!")
+            else:
+                st.error("Erro ao adicionar receita.")
 
-        # TERCEIRA PARTE -> ADICIONAR DESPESAS
-        if selection == "Despesas":
-            st.subheader("Adicionar Despesas")
-            a, b = st.columns(2)
-            with a:
-                titulo_despesa = st.text_input("Titulo").capitalize()
-            with b:
-                valor_despesa = st.number_input("Valor", min_value=0.1, step=0.01)
-            c, d = st.columns(2)
-            with c:
-                data_despesa = st.date_input("Data").strftime('%Y-%m-%d')
-            with d:
-                tipo_despesa = st.selectbox("Categoria", ["Entretenimento", "Transporte", "Alimentação", "Educação", "Casa", "Saúde", "Compras", "Investimento"])
-            if st.button("Adicionar Despesa"):
-                if adicionar_despesa(titulo_despesa, valor_despesa, data_despesa, tipo_despesa):
-                    st.success("Despesa adicionada com sucesso!")
-                else:
-                    st.error("Erro ao adicionar despesa.")
+    # TERCEIRA PARTE -> ADICIONAR DESPESAS
+    if selection == "Despesas":
+        st.subheader("Adicionar Despesas")
+        a, b = st.columns(2)
+        with a:
+            titulo_despesa = st.text_input("Titulo").capitalize()
+        with b:
+            valor_despesa = st.number_input("Valor", min_value=0.1, step=0.01)
+        c, d = st.columns(2)
+        with c:
+            data_despesa = st.date_input("Data").strftime('%d-%m-%Y')
+        with d:
+            tipo_despesa = st.selectbox("Categoria", ["Entretenimento", "Transporte", "Alimentação", "Educação", "Casa", "Saúde", "Compras", "Investimento"])
+        if st.button("Adicionar Despesa"):
+            if adicionar_despesa(titulo_despesa, valor_despesa, data_despesa, tipo_despesa):
+                st.success("Despesa adicionada com sucesso!")
+            else:
+                st.error("Erro ao adicionar despesa.")
 
 with cart:
     
@@ -125,45 +114,74 @@ st.subheader(' ')
 
 st.subheader("Categorias de Despesas")
 
+options = ["Cartão", "Gráfico", "Orçamento"]
+selection = st.radio("Selecionar uma opção", options=options, horizontal=True)
+
 st.write(' ')
-
 # FILTRANDO AS DESPESAS POR CATEGORIA NO MES ATUAL
+if selection == "Gráfico":
+    st.write('Em breve!')
 
-despAlimentação = obter_despesas_categorias("Alimentação")
-despTransporte = obter_despesas_categorias("Transporte")
-despEntretenimento = obter_despesas_categorias("Entretenimento")
-despEducacao = obter_despesas_categorias("Educação")
-despCasa = obter_despesas_categorias("Casa")
-despSaude = obter_despesas_categorias("Saúde")
-despCompras = obter_despesas_categorias("Compras")
-despInvestimento = obter_despesas_categorias("Investimento")
+if selection == "Orçamento":
+    col1, col2 = st.columns(2)
+    with col1:
+        selectOrçamento = st.selectbox('Selecione a categoria', ['Alimentação', 'Saúde', 'Transporte', 'Entretenimento', 'Compras', 'Investimento', 'Casa', 'Educação'])
+    with col2:
+        if selectOrçamento == 'Alimentação':
+            orAlimentacao = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
+        if selectOrçamento == 'Saúde':
+            orSaude = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
+        if selectOrçamento == 'Transporte':
+            orTransporte = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
+        if selectOrçamento == 'Entretenimento':
+            orEntretenimento = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
+        if selectOrçamento == 'Compras':
+            orCompras = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
+        if selectOrçamento == 'Investimento':
+            orInvestimento = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
+        if selectOrçamento == 'Casa':
+            orCasa = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
+        if selectOrçamento == 'Educação':
+            orEdu = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
 
-# DEFININDO OS DADOS DAS CATEGORIAS
 
-categorias = [
-    Categoria(nome="Entretenimento", emoji="🎉", orcamento_mensal=Decimal("1000.00"),
-              gasto_mensal=Decimal(despEntretenimento), descricao="Streaming, jogos, passeios."),
-    Categoria(nome="Transporte", emoji="🚗", orcamento_mensal=Decimal("500.00"),
-              gasto_mensal=Decimal(despEntretenimento), descricao="Transportes, estacionamento, gasolina."),
-    Categoria(nome="Alimentação", emoji="🍔", orcamento_mensal=Decimal("800.00"),
-              gasto_mensal=Decimal(despAlimentação), descricao="Restaurantes, fastfoods, mercado."),
-    Categoria(nome="Educação", emoji="📚", orcamento_mensal=Decimal("600.00"),
-              gasto_mensal=Decimal(despEducacao), descricao="Mensalidades, cursos."),
-    Categoria(nome="Casa", emoji="🏠", orcamento_mensal=Decimal("1200.00"),
-              gasto_mensal=Decimal(despCasa), descricao="Contas de casa, pet."),
-    Categoria(nome="Saúde", emoji="🏥", orcamento_mensal=Decimal("400.00"),
-              gasto_mensal=Decimal(despSaude), descricao="Consultas, rémedios, autocuidado."),
-    Categoria(nome="Compras", emoji="🛒", orcamento_mensal=Decimal("700.00"),
-              gasto_mensal=Decimal(despCompras), descricao="Roupas, eletrônicos, acessórios."),
-    Categoria(nome="Investimento", emoji="💹", orcamento_mensal=Decimal("900.00"),
-              gasto_mensal=Decimal(despInvestimento), descricao="Despesas com investimento")
-]
+if selection == "Cartão":
 
-row1 = st.columns(4)
-row2= st.columns(4)
+    despAlimentação = obter_despesas_categorias("Alimentação")
+    despTransporte = obter_despesas_categorias("Transporte")
+    despEntretenimento = obter_despesas_categorias("Entretenimento")
+    despEducacao = obter_despesas_categorias("Educação")
+    despCasa = obter_despesas_categorias("Casa")
+    despSaude = obter_despesas_categorias("Saúde")
+    despCompras = obter_despesas_categorias("Compras")
+    despInvestimento = obter_despesas_categorias("Investimento")
 
-# EXIBINDO AS COLUNAS DE CATEGORIAS
+    # DEFININDO OS DADOS DAS CATEGORIAS
 
-for categoria, rol in zip(categorias, row1 + row2):
-    with rol:
-        render_categoria(categoria)
+    categorias = [
+        Categoria(nome="Entretenimento", emoji="🎉", orcamento_mensal=Decimal("1000.00"),
+                gasto_mensal=Decimal(despEntretenimento), descricao="Streaming, jogos, passeios."),
+        Categoria(nome="Transporte", emoji="🚗", orcamento_mensal=Decimal("500.00"),
+                gasto_mensal=Decimal(despEntretenimento), descricao="Transportes, estacionamento, gasolina."),
+        Categoria(nome="Alimentação", emoji="🍔", orcamento_mensal=Decimal("800.00"),
+                gasto_mensal=Decimal(despAlimentação), descricao="Restaurantes, fastfoods, mercado."),
+        Categoria(nome="Educação", emoji="📚", orcamento_mensal=Decimal("600.00"),
+                gasto_mensal=Decimal(despEducacao), descricao="Mensalidades, cursos, livros."),
+        Categoria(nome="Casa", emoji="🏠", orcamento_mensal=Decimal("1200.00"),
+                gasto_mensal=Decimal(despCasa), descricao="Contas de casa, pet."),
+        Categoria(nome="Saúde", emoji="🏥", orcamento_mensal=Decimal("400.00"),
+                gasto_mensal=Decimal(despSaude), descricao="Consultas, rémedios, autocuidado."),
+        Categoria(nome="Compras", emoji="🛒", orcamento_mensal=Decimal("700.00"),
+                gasto_mensal=Decimal(despCompras), descricao="Roupas, eletrônicos, acessórios."),
+        Categoria(nome="Investimento", emoji="💹", orcamento_mensal=Decimal("900.00"),
+                gasto_mensal=Decimal(despInvestimento), descricao="Ações, poupança, investimentos.")
+    ]
+
+    row1 = st.columns(4)
+    row2= st.columns(4)
+
+    # EXIBINDO AS COLUNAS DE CATEGORIAS
+
+    for categoria, rol in zip(categorias, row1 + row2):
+        with rol:
+            render_categoria(categoria)
