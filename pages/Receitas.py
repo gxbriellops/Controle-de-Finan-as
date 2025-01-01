@@ -4,20 +4,15 @@ import sqlite3
 import os
 
 # Definir categorias de receitas
-Categorias = [
-    'Salário mensal',
-    'Freelance',
-    'Renda passiva'
-]
 
-def update_receita(conn, titulo, valor, data, categoria, original_titulo):
+def update_receita(conn, titulo, valor, data, original_titulo):
     try:
         cursor = conn.cursor()
         cursor.execute("""
             UPDATE receitas 
-            SET titulo = ?, valor = ?, data = ?, categoria = ?
+            SET titulo = ?, valor = ?, data = ?
             WHERE titulo = ?
-        """, (titulo, valor, data, categoria, original_titulo))
+        """, (titulo, valor, data, original_titulo))
         conn.commit()
         return True
     except Exception as e:
@@ -41,7 +36,7 @@ db_receitas_path = os.path.join(base_dir, "../receitas.db")
 # Conectar ao banco de dados SQLite
 try:
     conn_receitas = sqlite3.connect(db_receitas_path)
-    df_receitas = pd.read_sql_query("SELECT titulo, valor, data, categoria FROM receitas", conn_receitas)
+    df_receitas = pd.read_sql_query("SELECT titulo, valor, data FROM receitas", conn_receitas)
 except Exception as e:
     st.error(f"Erro ao acessar o banco de dados de receitas: {e}")
     df_receitas = pd.DataFrame()
@@ -93,11 +88,6 @@ if not df_receitas.empty:
         'data': st.column_config.DateColumn(
             'Data',
             format="DD/MM/YYYY",
-        ),
-        'categoria': st.column_config.SelectboxColumn(
-            'Categoria',
-            options=Categorias,
-            required=True
         )
     }
     
@@ -124,7 +114,7 @@ if not df_receitas.empty:
                 
                 # Comparar valores normalizados
                 row_changed = False
-                for col in ['valor', 'data', 'categoria']:
+                for col in ['valor', 'data']:
                     if normalize_value(row[col]) != normalize_value(original_row[col]):
                         row_changed = True
                         break
@@ -141,7 +131,6 @@ if not df_receitas.empty:
                         row['titulo'],
                         valor_numerico,
                         row['data'].strftime('%Y-%m-%d'),
-                        row['categoria'],
                         row['titulo']
                     )
                     

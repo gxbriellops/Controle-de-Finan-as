@@ -19,8 +19,7 @@ def criar_tabela_receitas():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         titulo TEXT NOT NULL,
         valor REAL NOT NULL,
-        data DATE NOT NULL,
-        categoria TEXT NOT NULL
+        data DATE NOT NULL
     );
     """
 
@@ -60,7 +59,7 @@ def criar_tabela_despesas():
     conn.commit()
     conn.close()
 
-def adicionar_receita(titulo, valor, data, categoria):
+def adicionar_receita(titulo, valor, data):
     try:
         if valor <= 0:
             raise ValueError("O valor deve ser maior que zero")
@@ -70,10 +69,10 @@ def adicionar_receita(titulo, valor, data, categoria):
         conn = sqlite3.connect(caminho_db)
         cursor = conn.cursor()
         query = """
-        INSERT INTO receitas (titulo, valor, data, categoria)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO receitas (titulo, valor, data)
+        VALUES (?, ?, ?)
         """
-        cursor.execute(query, (titulo, valor, data, categoria))
+        cursor.execute(query, (titulo, valor, data))
         conn.commit()
         conn.close()
         return True

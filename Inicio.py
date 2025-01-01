@@ -1,11 +1,10 @@
 import streamlit as st
-import sqlite3
 import pandas as pd
 import plotly.express as px
 from database import criar_tabela_receitas, criar_tabela_despesas, adicionar_despesa, adicionar_receita
 from filtros import obter_receitas_mes_atual, obter_despesas_mes_atual, obter_despesas_categorias
-from categ import Categoria, render_categoria
-from decimal import Decimal
+import os
+import sqlite3
 
 st.cache_data()
 
@@ -69,16 +68,15 @@ with tra:
             titulo_receita = st.text_input("Titulo").capitalize()
         with b:
             valor_receita = st.number_input("Valor", min_value=0.1, step=0.01)
-        c, d = st.columns(2)
-        with c:
-            data_receita = st.date_input("Data").strftime('%Y-%m-%d')
-        with d:
-            tipo_receita = st.selectbox("Categoria", ["Salário mensal", "Freelance", "Renda passiva"])
+        data_receita = st.date_input("Data").strftime('%Y-%m-%d')
         if st.button("Adicionar Receita"):
-            if adicionar_receita(titulo_receita, valor_receita, data_receita, tipo_receita):
+            try:
+                adicionar_receita(titulo_receita, valor_receita, data_receita)
                 st.success("Receita adicionada com sucesso!")
-            else:
-                st.error("Erro ao adicionar receita.")
+            except ValueError as e:
+                st.error(str(e))
+            except Exception as e:
+                st.error(f"Erro ao adicionar receita: {str(e)}")
 
     # TERCEIRA PARTE -> ADICIONAR DESPESAS
     if selection == "Despesas":
@@ -90,98 +88,74 @@ with tra:
             valor_despesa = st.number_input("Valor", min_value=0.1, step=0.01)
         c, d = st.columns(2)
         with c:
-            data_despesa = st.date_input("Data").strftime('%d-%m-%Y')
+            data_despesa = st.date_input("Data").strftime('%Y-%m-%d')
         with d:
             tipo_despesa = st.selectbox("Categoria", ["Entretenimento", "Transporte", "Alimentação", "Educação", "Casa", "Saúde", "Compras", "Investimento"])
         if st.button("Adicionar Despesa"):
-            if adicionar_despesa(titulo_despesa, valor_despesa, data_despesa, tipo_despesa):
+            try:
+                adicionar_despesa(titulo_despesa, valor_despesa, data_despesa, tipo_despesa)
                 st.success("Despesa adicionada com sucesso!")
-            else:
-                st.error("Erro ao adicionar despesa.")
-
+            except ValueError as e:
+                st.error(str(e))
+            except Exception as e:
+                st.error(f"Erro ao adicionar despesa: {str(e)}")
 with cart:
-    
-    if st.button('Meus cartões'):
-        st.write('Em breve!')
+    st.write('')
 
 with cont:
-    if st.button('Contas'):
-        st.write('Em breve!')
-
-st.subheader(' ')
-
-# EXIBINDO AS COLUNAS DE CATEGORIAS
-
-st.subheader("Categorias de Despesas")
-
-options = ["Cartão", "Gráfico", "Orçamento"]
-selection = st.radio("Selecionar uma opção", options=options, horizontal=True)
+    st.write('')
 
 st.write(' ')
-# FILTRANDO AS DESPESAS POR CATEGORIA NO MES ATUAL
-if selection == "Gráfico":
-    st.write('Em breve!')
 
-if selection == "Orçamento":
-    col1, col2 = st.columns(2)
-    with col1:
-        selectOrçamento = st.selectbox('Selecione a categoria', ['Alimentação', 'Saúde', 'Transporte', 'Entretenimento', 'Compras', 'Investimento', 'Casa', 'Educação'])
-    with col2:
-        if selectOrçamento == 'Alimentação':
-            orAlimentacao = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
-        if selectOrçamento == 'Saúde':
-            orSaude = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
-        if selectOrçamento == 'Transporte':
-            orTransporte = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
-        if selectOrçamento == 'Entretenimento':
-            orEntretenimento = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
-        if selectOrçamento == 'Compras':
-            orCompras = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
-        if selectOrçamento == 'Investimento':
-            orInvestimento = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
-        if selectOrçamento == 'Casa':
-            orCasa = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
-        if selectOrçamento == 'Educação':
-            orEdu = st.number_input('Digite o valor do orçamento', min_value=0.0, step=0.01)
+pasta_projeto = os.getcwd()
+caminho_db = os.path.join(pasta_projeto, 'despesas.db')
 
+query = """
+SELECT * FROM despesas
+WHERE strftime('%Y-%m', data) = strftime('%Y-%m', DATE('now'))
+"""
 
-if selection == "Cartão":
+df = pd.read_sql_query(query, sqlite3.connect(caminho_db))
 
-    despAlimentação = obter_despesas_categorias("Alimentação")
-    despTransporte = obter_despesas_categorias("Transporte")
-    despEntretenimento = obter_despesas_categorias("Entretenimento")
-    despEducacao = obter_despesas_categorias("Educação")
-    despCasa = obter_despesas_categorias("Casa")
-    despSaude = obter_despesas_categorias("Saúde")
-    despCompras = obter_despesas_categorias("Compras")
-    despInvestimento = obter_despesas_categorias("Investimento")
+# Convertendo a coluna 'data' para o tipo datetime
+# Convert data to datetime and sort
+df['data'] = pd.to_datetime(df['data'])
+df = df.sort_values('data')
 
-    # DEFININDO OS DADOS DAS CATEGORIAS
+# Group by date and category
+daily_df = df.groupby([df['data'].dt.date, 'categoria'])['valor'].sum().reset_index()
 
-    categorias = [
-        Categoria(nome="Entretenimento", emoji="🎉", orcamento_mensal=Decimal("1000.00"),
-                gasto_mensal=Decimal(despEntretenimento), descricao="Streaming, jogos, passeios."),
-        Categoria(nome="Transporte", emoji="🚗", orcamento_mensal=Decimal("500.00"),
-                gasto_mensal=Decimal(despEntretenimento), descricao="Transportes, estacionamento, gasolina."),
-        Categoria(nome="Alimentação", emoji="🍔", orcamento_mensal=Decimal("800.00"),
-                gasto_mensal=Decimal(despAlimentação), descricao="Restaurantes, fastfoods, mercado."),
-        Categoria(nome="Educação", emoji="📚", orcamento_mensal=Decimal("600.00"),
-                gasto_mensal=Decimal(despEducacao), descricao="Mensalidades, cursos, livros."),
-        Categoria(nome="Casa", emoji="🏠", orcamento_mensal=Decimal("1200.00"),
-                gasto_mensal=Decimal(despCasa), descricao="Contas de casa, pet."),
-        Categoria(nome="Saúde", emoji="🏥", orcamento_mensal=Decimal("400.00"),
-                gasto_mensal=Decimal(despSaude), descricao="Consultas, rémedios, autocuidado."),
-        Categoria(nome="Compras", emoji="🛒", orcamento_mensal=Decimal("700.00"),
-                gasto_mensal=Decimal(despCompras), descricao="Roupas, eletrônicos, acessórios."),
-        Categoria(nome="Investimento", emoji="💹", orcamento_mensal=Decimal("900.00"),
-                gasto_mensal=Decimal(despInvestimento), descricao="Ações, poupança, investimentos.")
-    ]
+fig = px.bar(
+    daily_df,
+    x="categoria",
+    y="valor",
+    color="categoria",
+    title="Gastos Mensal por Categoria",
+    labels={"valor": "Valor (R$)", "categoria": "Categoria"}
+)
 
-    row1 = st.columns(4)
-    row2= st.columns(4)
+fig.update_layout(
+    xaxis=dict(
+        tickmode='auto',
+        dtick='D1',  # Show tick for each day
+        tickformat='%d/%m',  # Brazilian date format
+    ),
+    yaxis_tickprefix='R$ ',
+    hovermode="x unified",
+    legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=1.02
+    )
+)
 
-    # EXIBINDO AS COLUNAS DE CATEGORIAS
+# Add hover template
+fig.update_traces(
+    hovertemplate="<br>".join([
+        "Valor: R$ %{y:.2f}",
+        "<extra></extra>"
+    ])
+)
 
-    for categoria, rol in zip(categorias, row1 + row2):
-        with rol:
-            render_categoria(categoria)
+st.plotly_chart(fig, use_container_width=True)
