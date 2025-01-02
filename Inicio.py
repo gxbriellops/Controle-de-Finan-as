@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from database import criar_tabela_receitas, criar_tabela_despesas, adicionar_despesa, adicionar_receita
-from filtros import obter_receitas_mes_atual, obter_despesas_mes_atual, obter_despesas_categorias
+from filtros import obter_receitas_mes_atual, obter_despesas_mes_atual
 import os
 import sqlite3
 
@@ -29,12 +29,10 @@ col1, col2, col3= st.columns(3)
 
 # BALANÇO
 with col1:
-    with st.container(height=180, border=True):
-        balanco = total_receitas - total_despesas
-        if balanco < 0 or balanco == 0:
-            balanco = 0
-        st.subheader('Balanço 🏦')
-        st.metric(label="Saldo aproximado de todas contas", value=f"R${balanco:.2f}", delta="")
+    balanco = pd.DataFrame({'Tipo': ['Receitas', 'Despesas'], 'Valor':[total_receitas, total_despesas]})
+    pie = px.pie(balanco, values='Valor', names='Tipo', title='Balanço', color_discrete_sequence=['green', 'red'])
+    pie.update_traces(textposition='inside', textinfo='percent+label', showlegend=False)
+    st.plotly_chart(pie)
 
 # RECEITAS
 with col2:
@@ -67,7 +65,7 @@ with tra:
         with a:
             titulo_receita = st.text_input("Titulo").capitalize()
         with b:
-            valor_receita = st.number_input("Valor", min_value=0.1, step=0.01)
+            valor_receita = st.number_input("Valor", min_value=0.0, step=0.01)
         data_receita = st.date_input("Data").strftime('%Y-%m-%d')
         if st.button("Adicionar Receita"):
             try:
@@ -85,7 +83,7 @@ with tra:
         with a:
             titulo_despesa = st.text_input("Titulo").capitalize()
         with b:
-            valor_despesa = st.number_input("Valor", min_value=0.1, step=0.01)
+            valor_despesa = st.number_input("Valor", min_value=0.0, step=0.01)
         c, d = st.columns(2)
         with c:
             data_despesa = st.date_input("Data").strftime('%Y-%m-%d')
