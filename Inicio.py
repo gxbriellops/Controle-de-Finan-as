@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from database import criar_tabela_receitas, criar_tabela_despesas, adicionar_despesa, adicionar_receita
-from filtros import obter_receitas_mes_atual, obter_despesas_mes_atual
+from services.database import criar_tabela_receitas, criar_tabela_despesas, adicionar_despesa, adicionar_receita
+from services.filtros import obter_receitas_mes_atual, obter_despesas_mes_atual
 import os
 import sqlite3
 
