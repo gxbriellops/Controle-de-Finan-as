@@ -3,12 +3,13 @@ import streamlit as st
 import sqlite3
 import os
 
-slidebar = 'assets/imagens/logo extended.png'
-icon = 'assets/imagens/logo.png'
+slidebar = 'assets/imagens/logo bold.png'
+icon = 'assets/imagens/simbolol bold.png'
+
+st.logo(slidebar, icon_image=icon, size='large')
 
 st.set_page_config(
-    page_title="Gastos",
-    page_icon=icon,
+    page_title="Mínimo",
     layout="wide"
 )
 
