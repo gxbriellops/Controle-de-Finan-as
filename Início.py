@@ -46,7 +46,7 @@ with col2:
             total_receitas = 0
         st.subheader('Entradas 💰')
         st.metric(label="Total de receitas desse mês", value=f"R${total_receitas:.2f}", delta="")
-    st.subheader("Nova entrada")
+    st.markdown("##### Nova entrada")
     a, b = st.columns(2)
     with a:
         titulo_receita = st.text_input("Titulo da entrada").capitalize()
@@ -69,7 +69,7 @@ with col3:
             total_despesas = 0
         st.subheader('Gastos 🪙')
         st.metric(label="Total de gastos desse mês", value=f"R${total_despesas:.2f}", delta="")
-    st.subheader("Adicionar gasto")
+    st.markdown("##### Adicionar gasto")
     a, b = st.columns(2)
     with a:
         titulo_despesa = st.text_input("Titulo da gasto").capitalize()
