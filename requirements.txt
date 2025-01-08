@@ -1,3 +1,4 @@
+plotly
 plotly.express
 os
 sqlite3
