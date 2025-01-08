@@ -1,0 +1,4 @@
+plotly.express
+os
+sqlite3
+pandas
